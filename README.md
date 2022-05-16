@@ -36,8 +36,9 @@ workloads. Before we get into building and running the benchmarks,
 we digress a little. `Benchmark.cpp` contains a variable
 _dataset_prep_threads_. The value of this variable needs to be set
 equal to the value set in step 3 of Section 1, otherwise the benchmarks
-will fail to execute. Additionally, only execute these benchmarks
-with dataset sizes stored on disk.
+will fail to execute. Additionally, it is critical that you 
+execute these benchmarks with datasets that are stored on disk by 
+following the steps in Section 1.
 
 Coming back to building and running the benchmarks, the script `run_benchmarks.sh`
 builds the code and runs the executable for you. However, if you
