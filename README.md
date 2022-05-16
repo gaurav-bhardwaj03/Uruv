@@ -90,7 +90,7 @@ performance.
 Each workload in `run_benchmarks.sh` runs 10 times and so you'll
 find 10 lines per workload in the file `final_benchmarks.txt`. NOTE,
 empty out `final_benchmarks.txt` before running the script provided
-otherwise old data can be present polluting the results.
+otherwise old data can be present, polluting the results.
 
 To take the average of each of these 10 runs per workload, consider
 the last 7 and take the mean of the throughputs present ignoring
