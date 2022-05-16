@@ -28,7 +28,7 @@ to the maximum number of logical threads in your system.
 
 ## 2. Building and running the benchmarks
 The instructions mentioned in this section, apply to all three subdirectories - 
-_Uruv_, _vcas_bst_ and _OpenBwTree_. Each subdirectory in this artifact contains 
+_Uruv_, _vcas_bst_ and _OpenBwTree_. Each subdirectory contains 
 their own CMakeLists which needs to be built independently. They 
 contain a `Benchmark.cpp` file containing logic that benchmarks the
 data structure and a script `run_benchmarks.sh` that runs various
