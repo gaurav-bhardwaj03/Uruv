@@ -25,7 +25,7 @@ and is required to quickly read the dataset from disk. Set it to the
 maximum number of logical threads in your system. Let us say the 
 maximum number of threads are 40.
 7. The second argument is the dataset size which is 500000000.
-8. Run `./build/DatasetGen 500000000 40` to generate your dataset.
+8. Run `./build/DatasetGen 40 500000000` to generate your dataset.
 
 ## 2. Building and running the benchmarks
 The instructions mentioned in this section, apply to all three subdirectories - 
