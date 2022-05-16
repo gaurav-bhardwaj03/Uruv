@@ -14,23 +14,18 @@ Let us say you want to create a dataset of size 500 million. Do the following,
 1. Create a subdirectory `DatasetGen/Data` if it does not exist. 
 Create a new subdirectory named `500M` inside `DatasetGen/Data`. If
 you were creating a dataset of size 100 million instead, you would name 
-the subdirectory `100M`.
-2. Set how many files you want this dataset to be split into for multi-threaded 
-reading while benchmarking. This can be done by setting the variable _dataset_prep_threads_ on _line 12_
-in `dataset_generator.cpp`. If you set this value to 1, benchmarking larger
-datasets will take a lot of time. It is highly recommended to set this
-to the maximum number of logical threads in your system. 
-3. Go back to `Uruv-main/DatasetGen`
-4. `cmake -S ./`
-5. `make`
-6. The executable `/build/DatasetGen` is created. To run it you need
+the subdirectory `100M`. 
+2. Go back to `Uruv-main/DatasetGen`
+3. `cmake -S ./`
+4. `make`
+5. The executable `/build/DatasetGen` is created. To run it you need
 to pass two command line arguments to it. 
-7. The first argument sets the value of the variable _dataset_prep_threads_
+6. The first argument sets the value of the variable _dataset_prep_threads_
 and is required to quickly read the dataset from disk. Set it to the
 maximum number of logical threads in your system. Let us say the 
 maximum number of threads are 40.
-8. The second argument is the dataset size which is 500000000.
-9. Run `./build/DatasetGen 500000000 40` to generate your dataset.
+7. The second argument is the dataset size which is 500000000.
+8. Run `./build/DatasetGen 500000000 40` to generate your dataset.
 
 ## 2. Building and running the benchmarks
 The instructions mentioned in this section, apply to all three subdirectories - 
