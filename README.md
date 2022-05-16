@@ -54,7 +54,8 @@ the file is of the format,
 
 `number_of_threads` _WHITESPACE_ `read_percentage` _WHITESPACE_ `insert_percentage` _WHITESPACE_ 
 `delete_percentage` _WHITESPACE_ `range_query_percentage` _WHITESPACE_ 
-`range_query_size` _WHITESPACE_ `prefilling_size` _WHITESPACE_ `dataset_size`
+`range_query_size` _WHITESPACE_ `prefilling_size` _WHITESPACE_ `dataset_size` 
+_WHITESPACE_ `throughput per second`
 
 Each workload runs 10 times and so you'll find 10 lines per workload.
 
