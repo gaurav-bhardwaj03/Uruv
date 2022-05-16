@@ -65,7 +65,7 @@ the paper, we set it to 500M.
 explained in step 7 in section 1. In the paper, we set it to 80, but 
 you should set it to the maximum logical threads in your system.
 14. NOTE, arguments 8 and 9 need to be set to the same values you used
-earlier (steps 6 and 7 in section 1) for datasets you generated. Not doing so, will result in a
+earlier (steps 7 and 8 in section 1) for datasets you generated. Not doing so, will result in a
 failure in executing the benchmark.
 
 A file `final_benchmarks.txt` will be created
