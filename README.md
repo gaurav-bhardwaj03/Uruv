@@ -43,8 +43,8 @@ workloads from the paper.
 
 To build the code and understand how to run and use the benchmark, 
 do the following,
-1. `cmake -S ./`
-2. `make`
+1. Run `cmake -S ./`
+2. Run `make`
 3. The executable will be present in the `build` directory.
 4. The executable will take in 9 command line arguments. 
 5. The first argument is the number of threads accessing the data structure
