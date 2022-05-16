@@ -13,9 +13,8 @@ that can be read from disk need to be generated. `DatasetGen/dataset_generator.c
 contains logic to generate random integer datasets and store them 
 on disk. _**You can only create dataset sizes that are an integer multiple of 1 million**_.
 Let us say you want to create a dataset of size 500 million. Do the following,
-1. Create a new subdirectory named `500M` inside `DatasetGen/Data`. If
-you were creating a dataset of size 100 million instead, you would name
-the subdirectory `100M`.
+1. Create a new subdirectory named `500M` inside `DatasetGen/Data`. If you were creating a dataset of size 100 million instead, you would name
+the subdirectory `100M`. If `DatasetGen/Data` does not exist, create it.
 2. Set the variable _DatasetSize_ to `500000000` on _line 14_ in `dataset_generator.cpp`.
 3. Set how many files you want this dataset to be split into for multi-threaded 
 reading while benchmarking. This can be done by setting the variable _dataset_prep_threads_ on _line 12_
