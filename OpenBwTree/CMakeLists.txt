@@ -6,7 +6,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ./build)
 set(CMAKE_BUILD_TYPE Debug)
 
 add_executable(OpenBWTree
-        Expt1.cpp)
+        Benchmark.cpp)
 
 target_link_libraries(OpenBWTree
         -lpthread

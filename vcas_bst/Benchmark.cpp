@@ -22,8 +22,7 @@ bool running = false;
 std::atomic<size_t> ready_threads (0);
 std::vector<uint64_t> tho;
 std::vector<uint64_t> dataset;
-int dataset_prep_threads = 80;
-std::vector<std::vector<uint64_t>> dataset_split(dataset_prep_threads);
+int dataset_prep_threads;
 std::ofstream fout;
 
 #define test_type int64_t
@@ -34,7 +33,7 @@ std::ofstream fout;
 const test_type NO_VALUE = -1;
 const test_type KEY_MIN = numeric_limits<int64_t>::min()+1;
 const test_type KEY_MAX = numeric_limits<int64_t>::max()-1; // must be less than max(), because the snap collector needs a reserved key larger than this!
-const int64_t TOTAL_THREADS = 161;
+const int64_t TOTAL_THREADS = 200;
 
 #define MEMMGMT_T record_manager<RECLAIM, ALLOC, POOL, Node<test_type, test_type> >
 #define DS_DECLARATION vcas_bst<test_type, test_type, less<test_type>, MEMMGMT_T>
@@ -60,7 +59,11 @@ int main(int argc, char** argv)
 	for(int i = 0; i < TOTAL_THREADS; i++){
 		Tree -> initThread(i);
 	}
-	
+	if(argc != 10)
+	{
+		std::cout<<"Invalid Arguments \n";
+		return 0;
+	}
 	threads = atoi(argv[1]);
 	Read = ((double)atoi(argv[2]))/100;
 	Insert = ((double)atoi(argv[3]))/100;
@@ -69,46 +72,28 @@ int main(int argc, char** argv)
 	RangeQuerySize = atol(argv[6]);
 	table_size = atol(argv[7]);
 	DatasetSize = atol(argv[8]);
+	dataset_prep_threads = atoi(argv[9]);
+	dataset = std::vector<uint64_t>(DatasetSize);
+	if(threads == 0){
+		std::cout<<"Error:: Threads cannot be Zero\n";
+		return 0;
+	}
+	if(DatasetSize == 0)
+	{
+		std::cout<<"Error:: Dataset size cannot be zero\n";
+		return 0;
+	}
 	printf("Parameters\nThreads: %ld\nRead: %lf\nInsert: %lf\nDelete: %lf\nRangeQuery: %lf\nRangeQuerySize: %ld\n"
 		   "TableSize: %ld\nDatasetSize: %ld\n", threads, Read, Insert, Delete, RangeQuery, RangeQuerySize, table_size, DatasetSize);
 	assert(((int64_t)(Read + Delete + Insert + RangeQuery)) == 1);
 	tho.resize(threads, 0);
-	if(DatasetSize == 500000000 || DatasetSize == 150000000){
-		std::cout << "Reading the dataset from disk\n";
-		read_from_files();
-	}
-	else {
-		prepare_dataset();
-		std::random_device rd;
-		std::mt19937 gen(rd());
-		std::shuffle(begin(dataset), end(dataset), gen);
-	}
+	read_from_files();
 	std::cout<<"Dataset Prepared\n";
-	prepare_table ();
+	if(table_size > 0)
+		prepare_table ();
 	std::cout<<"Table Prepared\n";
 	run_benchmark ();
 	fout.close();
-}
-
-void dataset_prep(int64_t tid, int64_t start, int64_t fin){
-	for(int i = start; i < fin; i++){
-		dataset_split[tid].push_back(i);
-	}
-}
-
-void prepare_dataset(){
-	std::vector<std::thread> dataset_threads(dataset_prep_threads);
-	int64_t number_of_keys_per_thread = DatasetSize/dataset_prep_threads;
-	for(int64_t i = 0; i < dataset_prep_threads; i++){
-		int64_t fin = std::min((i + 1) * number_of_keys_per_thread, DatasetSize);
-		dataset_threads[i] = std::thread(dataset_prep, i, i * (number_of_keys_per_thread), fin);
-	}
-	for(int64_t i = 0; i < dataset_prep_threads; i++){
-		dataset_threads[i].join();
-	}
-	for(int i = 0; i < dataset_prep_threads; i++){
-		dataset.insert(dataset.end(), dataset_split[i].begin(), dataset_split[i].end());
-	}
 }
 
 void run (int64_t tid) {
@@ -120,8 +105,6 @@ void run (int64_t tid) {
 	int64_t j = index_dis(gen);
 	int64_t *keys = new int64_t[(uint64_t)RangeQuerySize];
 	int64_t *values = new int64_t [(uint64_t)RangeQuerySize];
-	uint64_t dataset_prep_threads=0;
-	uint64_t rq_put = 0;
 	while (!running);
 	while (running) {
 		double d = (double) ratio_dis (gen);
@@ -204,15 +187,22 @@ void run_benchmark () {
 	std::cout<< threads << " " << Read <<    " "   << Insert << " "  << Delete << " "  << RangeQuery << " " << RangeQuerySize << " " << table_size << " " << DatasetSize << " "
 			 << throughput / Runtime << "\n";
 	fout<< threads << " " << Read <<    " "   << Insert << " "  << Delete << " "  << RangeQuery << " " << RangeQuerySize << " " << table_size << " " << DatasetSize << " " <<
-	throughput / Runtime << "\n";
+		throughput / Runtime << "\n";
 }
 
-void file_reader(int64_t tid){
+void file_reader(int64_t tid, int64_t start){
 	std::ifstream reader;
 	reader.open("../DatasetGen/Data/" + std::to_string(DatasetSize/1000000)+ "M/Data_Split_" + std::to_string(tid), std::ios::in);
+	if(!reader.is_open())
+	{
+		std::cout<<"Error:: Dataset does not exist\n";
+		exit(1);
+	}
 	std::string number;
+	int64_t index = start;
 	while(reader >> number){
-		dataset_split[tid].push_back(std::stoll(number));
+		dataset[index] = std::stoll(number);
+		index++;
 	}
 	reader.close();
 }
@@ -221,13 +211,11 @@ void read_from_files(){
 	std::vector<std::thread> reader_threads(dataset_prep_threads);
 	int64_t number_of_keys_per_thread = DatasetSize/dataset_prep_threads;
 	for(int64_t i = 0; i < dataset_prep_threads; i++){
+		int64_t begin = i * number_of_keys_per_thread;
 		int64_t fin = std::min((i + 1) * number_of_keys_per_thread, DatasetSize);
-		reader_threads[i] = std::thread(file_reader, i);
+		reader_threads[i] = std::thread(file_reader, i, begin);
 	}
 	for(int64_t i = 0; i < dataset_prep_threads; i++){
 		reader_threads[i].join();
-	}
-	for(int i = 0; i < dataset_prep_threads; i++){
-		dataset.insert(dataset.end(), dataset_split[i].begin(), dataset_split[i].end());
 	}
 }
