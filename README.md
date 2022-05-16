@@ -39,8 +39,8 @@ contain a `Benchmark.cpp` file containing logic that benchmarks the
 data structure and a script `run_benchmarks.sh` that runs various
 workloads from the paper.
 
-To build the code and run it on your own, do the following, (NOTE, if you 
-directly want to run the workloads in the paper jump to section 3)
+To build the code and understand how to run and use the benchmark, 
+do the following,
 1. `cmake -S ./`
 2. `make`
 3. The executable will be present in the `build` directory.
