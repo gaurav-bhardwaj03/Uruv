@@ -1,20 +1,21 @@
 This is the C++ artifact for DISC 2022's blind submission. The project
 contains three subdirectories - _Uruv_, _vcas_bst_, and _OpenBwTree_. These directories
 contain code that benchmarks the trees Uruv, VCAS-BST and OpenBw-Tree
-respectively. Please download the source code inside a directory named 
-`home/DISC_22_Artifact`. If you would like to use a custom directory instead, replace any occurence
-of the aforementioned directory in this repository with your custom
-directory. Please read the entire document carefully for a successful
-execution of the benchmarks. 
+respectively. Your source code would have extracted into a folder 
+called `Uruv-main` by default. If not, please rename the folder to that.
+Please read the entire document carefully for a successful execution
+of the benchmarks.
 
 ## 1. Dataset Generation
-Before the benchmarks, described below, are run, randomised datasets 
+Before you build and run the benchmarks, randomised datasets 
 that can be read from disk need to be generated. `DatasetGen/dataset_generator.cpp`
 contains logic to generate random integer datasets and store them 
 on disk. _**You can only create dataset sizes that are an integer multiple of 1 million**_.
 Let us say you want to create a dataset of size 500 million. Do the following,
-1. Create a new subdirectory named `500M` inside `DatasetGen/Data`. If you were creating a dataset of size 100 million instead, you would name
-the subdirectory `100M`. If `DatasetGen/Data` does not exist, create it.
+1. Create a subdirectory `DatasetGen/Data` if it does not exist. 
+Create a new subdirectory named `500M` inside `DatasetGen/Data`. If
+you were creating a dataset of size 100 million instead, you would name 
+the subdirectory `100M`.
 2. Set the variable _DatasetSize_ to `500000000` on _line 14_ in `dataset_generator.cpp`.
 3. Set how many files you want this dataset to be split into for multi-threaded 
 reading while benchmarking. This can be done by setting the variable _dataset_prep_threads_ on _line 12_
