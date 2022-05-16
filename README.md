@@ -3,7 +3,7 @@ contains three subdirectories - _Uruv_, _vcas_bst_, and _OpenBwTree_. These dire
 contain code that benchmarks the trees Uruv, VCAS-BST and OpenBw-Tree
 respectively. Please download the source code inside a directory named 
 `home/DISC_22_Artifact`. If you would like to use a custom directory instead, replace any occurence
-of the aforementioned directory in this source code with your custom
+of the aforementioned directory in this repository with your custom
 directory. Please read the entire document carefully for a successful
 execution of the benchmarks. 
 
