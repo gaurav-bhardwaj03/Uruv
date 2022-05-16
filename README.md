@@ -2,8 +2,10 @@ This is the C++ artifact for DISC 2022's blind submission. The project
 contains three subdirectories - _Uruv_, _vcas_bst_, and _OpenBwTree_. These directories
 contain code that benchmarks the trees Uruv, VCAS-BST and OpenBw-Tree
 respectively. Your source code would have extracted into a folder 
-called `Uruv-main` by default. Please read the entire document 
-carefully for a successful execution of the benchmarks.
+called `Uruv-main` by default. Please read the entire document properly
+at least once before executing commands in it. It is critical to gain
+a proper understanding of the code organisation and the benchmarking
+of every data structure present.
 
 ## 1. Dataset Generation
 Before you build and run the benchmarks, randomised datasets 
