@@ -22,7 +22,9 @@ the subdirectory `100M`)
 6. The executable `/build/DatasetGen` is created. To execute it you 
 need to pass two command line arguments to it. 
 7. The first argument sets the value of the variable _dataset_prep_threads_
-and is required to quickly read the dataset from disk. Set it to the
+and is required to quickly read the dataset from disk. This argument 
+tells the generator to split the dataset into _dataset_prep_threads_ 
+number of files for efficient reading. Set it to the
 maximum number of logical threads in your system. Let us say the 
 maximum number of threads are 80.
 8. The second argument is the dataset size which is 500000000 (since
@@ -75,12 +77,15 @@ the file is of the format,
 _WHITESPACE_ `throughput_per_second`
 
 ## 3. Running the workloads from the paper
-The script `run_benchmarks.sh` builds the code and runs the executable
-for you. It runs all workloads from the paper and can be run
-using the command `bash run_benchmarks.sh`. NOTE, the default script
-expects a dataset of size 500 million split across 80 files to be 
-already generated. Change the value of 80 in the script to the max
-logical threads in your system for best performance.
+Each subdirectory - _Uruv_, *OpenBwTree* and _vcas_bst_ contains `run_benchmarks.sh` 
+which builds the code and runs the executable for you. It runs all 
+workloads from the paper and can be run using the command
+`bash run_benchmarks.sh`. NOTE, the default script expects a dataset
+of size 500 million split across 80 files to be already generated. If
+you haven't generated the dataset yet, please follow Section 1 for
+instructions on how to do so. Change the value of 80 for every workload 
+in the script to the max logical threads in your system for best 
+performance.
 
 Each workload in `run_benchmarks.sh` runs 10 times and so you'll
 find 10 lines per workload in the file `final_benchmarks.txt`. NOTE,
