@@ -31,7 +31,6 @@ void read_from_files();
 
 int main(int argc, char** argv)
 {
-//    fout.open("/home/student/gaurav/Uruv/WFUruv/final_benchmarks.txt", std::ios::app);
     threads = 80;//atoi(argv[1]);
     Read = 0;//((double)atoi(argv[2]))/100;
     Insert = 1;//((double)atoi(argv[3]))/100;
