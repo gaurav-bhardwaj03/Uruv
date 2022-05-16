@@ -80,7 +80,7 @@ _WHITESPACE_ `throughput_per_second`
 ## 3. Running the workloads from the paper
 Each subdirectory - _Uruv_, *OpenBwTree* and _vcas_bst_ contains `run_benchmarks.sh` 
 which builds the code and runs the executable for you. It runs all 
-workloads from the paper and can be run using the command
+workloads from the paper for that data structure and can be run using the command
 `bash run_benchmarks.sh`. NOTE, the default script expects a dataset
 of size 500 million split across 80 files to be already generated. If
 you haven't generated the dataset yet, please follow Section 1 for
