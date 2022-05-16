@@ -26,7 +26,7 @@ to the maximum number of logical threads in your system.
 6. `make`
 7. `./build/DatasetGen`
 
-## 2. Running the benchmarks
+## 2. Building and running the benchmarks
 The instructions mentioned in this section, apply to all three subdirectories - 
 _Uruv_, _vcas_bst_ and _OpenBwTree_. Each subdirectory in this artifact contains 
 their own CMakeLists which needs to be built independently. They 
