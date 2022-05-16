@@ -49,7 +49,7 @@ void read_from_files();
 
 int main(int argc, char** argv)
 {
-	fout.open("/home/DISC_22_Artifact/vcas_bst/final_benchmarks.txt", std::ios::app);
+	fout.open("final_benchmarks.txt", std::ios::app);
 	Tree = DS_CONSTRUCTOR;
 	for(int i = 0; i < TOTAL_THREADS; i++){
 		Tree -> initThread(i);
@@ -209,7 +209,7 @@ void run_benchmark () {
 
 void file_reader(int64_t tid){
 	std::ifstream reader;
-	reader.open("/home/DISC_22_Artifact/DatasetGen/Data/" + std::to_string(DatasetSize/1000000)+ "M/Data_Split_" + std::to_string(tid), std::ios::in);
+	reader.open("../DatasetGen/Data/" + std::to_string(DatasetSize/1000000)+ "M/Data_Split_" + std::to_string(tid), std::ios::in);
 	std::string number;
 	while(reader >> number){
 		dataset_split[tid].push_back(std::stoll(number));

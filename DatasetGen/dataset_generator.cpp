@@ -4,22 +4,31 @@
 #include <thread>
 #include <random>
 #include <fstream>
+#include <cassert>
 
 void prepare_dataset();
 void write_to_files();
 void read_from_files();
 std::vector<int64_t> dataset;
-int64_t dataset_prep_threads = 8;
-std::vector<std::vector<int64_t>> dataset_split(dataset_prep_threads);
-int64_t DatasetSize = 1000000;
+int64_t dataset_prep_threads;
+int64_t DatasetSize;
+std::vector<std::vector<int64_t>> dataset_split;
 
-int main() {
+int main(int argc, char** argv) {
+	if(argc <= 2){
+		std::cout<<"Invalid Arguments\n";
+		return 0;
+	}
+	dataset_prep_threads = atoi(argv[1]);
+	DatasetSize = atoi(argv[2]);
+	assert(DatasetSize % 1000000 == 0);
+	dataset_split = std::vector<std::vector<int64_t>> (dataset_prep_threads);
 	prepare_dataset();
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::shuffle(begin(dataset), end(dataset), gen);
 	std::cout << "A randomised dataset of size : " << dataset.size() << " has been created"
-	<< std::endl;
+			  << std::endl;
 	std::cout << "Beginning to write it to disk\n";
 	write_to_files();
 	dataset = {};
@@ -52,7 +61,7 @@ void prepare_dataset(){
 
 void file_writer(int64_t tid, int64_t start, int64_t fin){
 	std::ofstream out;
-	out.open("/home/DISC_22_Artifact/DatasetGen/Data/" + std::to_string(DatasetSize/1000000)+ "M/Data_Split_" + std::to_string(tid), std::ios::out);
+	out.open("Data/" + std::to_string(DatasetSize/1000000)+ "M/Data_Split_" + std::to_string(tid), std::ios::out);
 	for(int64_t i = start; i < fin; i++){
 		out << dataset[i] << "\n";
 	}
@@ -73,7 +82,7 @@ void write_to_files(){
 
 void file_reader(int64_t tid, int64_t start, int64_t fin){
 	std::ifstream reader;
-	reader.open("/home/DISC_22_Artifact/DatasetGen/Data/" + std::to_string(DatasetSize/1000000)+ "M/Data_Split_" + std::to_string(tid), std::ios::in);
+	reader.open("Data/" + std::to_string(DatasetSize/1000000)+ "M/Data_Split_" + std::to_string(tid), std::ios::in);
 	std::string number;
 	while(reader >> number){
 		dataset_split[tid].push_back(std::stoll(number));

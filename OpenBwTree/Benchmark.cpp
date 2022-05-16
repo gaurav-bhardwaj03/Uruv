@@ -37,7 +37,7 @@ void read_from_files();
 
 int main(int argc, char** argv)
 {
-    fout.open("/home/DISC_22_Artifact/OpenBwTree/final_benchmarks.txt", std::ios::app);
+    fout.open("final_benchmarks.txt", std::ios::app);
 	threads = atoi(argv[1]);
 	Read = ((double)atoi(argv[2]))/100;
 	Insert = ((double)atoi(argv[3]))/100;
@@ -184,7 +184,7 @@ void run_benchmark () {
 
 void file_reader(int64_t tid){
 	std::ifstream reader;
-	reader.open("/home/DISC_22_Artifact/DatasetGen/Data/" + std::to_string(DatasetSize/1000000)+ "M/Data_Split_" + std::to_string(tid), std::ios::in);
+	reader.open("../DatasetGen/Data/" + std::to_string(DatasetSize/1000000)+ "M/Data_Split_" + std::to_string(tid), std::ios::in);
 	std::string number;
 	while(reader >> number){
 		dataset_split[tid].push_back(std::stoll(number));
