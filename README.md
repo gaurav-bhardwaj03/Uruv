@@ -21,7 +21,7 @@ reading while benchmarking. This can be done by setting the variable _dataset_pr
 in `dataset_generator.cpp`. If you set this value to 1, benchmarking larger
 datasets will take a lot of time. It is highly recommended to set this
 to the maximum number of logical threads in your system. 
-4. cd `home/DISC_22_Artifact/DatasetGen`
+4. `cd home/DISC_22_Artifact/DatasetGen`
 5. `cmake -S ./`
 6. `make`
 7. `./build/DatasetGen`
