@@ -8,17 +8,12 @@ template<typename K, typename V>
 class internal_node: public Node<int64_t, int64_t>
 {
 public:
+    std::atomic<int64_t> help_idx;
+    std::vector<K> key;
+    std::atomic<Node<K,V>*> ptr[MAX + 1];
     void mark();
-    void split_internal(Node<K,V>*, Node<K,V>*);
-    void create_new_leaf() {}
-    int64_t insert_leaf(K,V, int tid = -1, int phase = -1) {}
-    int64_t delete_leaf(K) {}
-    int64_t delete_leaf(K, int, int) {}
-    void stabilize() {}
-    void split_leaf() {}
-
-    bool merge_leaf(Node<K,V>* right_child) {}
-    Node<K,V>* merge_internal(Node<K,V>* ,Node<K,V>*, int64_t);
+    void split_internal(internal_node<K,V>*, internal_node<K,V>*);
+    internal_node<K,V>* merge_internal(internal_node<K,V>* ,internal_node<K,V>*, int64_t);
     internal_node<K,V> (int min, int max)
     {
         this -> min = min;
@@ -55,7 +50,7 @@ void internal_node<K,V>::mark(){
 }
 
 template<typename K, typename V>
-void internal_node<K,V> ::split_internal(Node<K,V>* left_child, Node<K,V>* right_child) {
+void internal_node<K,V> ::split_internal(internal_node<K,V>* left_child, internal_node<K,V>* right_child) {
     left_child -> count.store(count.load(std::memory_order_seq_cst)/2, std::memory_order_seq_cst);
     right_child -> count.store(count.load(std::memory_order_seq_cst) - left_child -> count.load(std::memory_order_seq_cst) - 1);
     int64_t j = 0;
@@ -77,11 +72,11 @@ void internal_node<K,V> ::split_internal(Node<K,V>* left_child, Node<K,V>* right
 }
 
 template<typename K, typename V>
-Node<K,V>* internal_node<K,V>::merge_internal(Node<K,V>* curr_node,Node<K,V>* right_child, int64_t idx) {
+internal_node<K,V>* internal_node<K,V>::merge_internal(internal_node<K,V>* curr_node,internal_node<K,V>* right_child, int64_t idx) {
     if(count.load(std::memory_order_seq_cst) + right_child -> count.load(std::memory_order_seq_cst) < max) // Merge
     {
-        Node<K,V>* new_node = new internal_node<K,V> (curr_node->min, curr_node->max);
-        Node<K,V>* new_merged_node = new internal_node<K,V> (min, max);
+        internal_node<K,V>* new_node = new internal_node<K,V> (curr_node->min, curr_node->max);
+        internal_node<K,V>* new_merged_node = new internal_node<K,V> (min, max);
         new_node -> count.store(curr_node -> count.load(std::memory_order_seq_cst) - 1, std::memory_order_seq_cst);
         new_merged_node -> count.store(count.load(std::memory_order_seq_cst) + right_child -> count.load(std::memory_order_seq_cst) + 1, std::memory_order_seq_cst);
         int64_t i = 0;
@@ -116,9 +111,9 @@ Node<K,V>* internal_node<K,V>::merge_internal(Node<K,V>* curr_node,Node<K,V>* ri
     else // borrow
     {
         std::chrono::high_resolution_clock::time_point op_time;
-        Node<K,V>* left_child = new internal_node<K,V> (min, max);
-        Node<K,V>* new_right_child = new internal_node<K,V> (min, max);
-        Node<K,V>* new_node = new internal_node<K,V> (curr_node -> min, curr_node -> max);
+        internal_node<K,V>* left_child = new internal_node<K,V> (min, max);
+        internal_node<K,V>* new_right_child = new internal_node<K,V> (min, max);
+        internal_node<K,V>* new_node = new internal_node<K,V> (curr_node -> min, curr_node -> max);
         new_node -> count.store(curr_node -> count.load(std::memory_order_seq_cst), std::memory_order_seq_cst);
         if(count.load(std::memory_order_seq_cst) > min) // left borrow
         {

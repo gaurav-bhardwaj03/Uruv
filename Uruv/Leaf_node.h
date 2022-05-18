@@ -7,22 +7,24 @@
 template<typename K, typename V>
 class leaf_node: public Node<int64_t, int64_t>{
 public:
+    std::atomic<int64_t> node_count;
+    std::atomic<std::vector<std::pair<K,Vnode<V>*>>*> res;
+    leaf_node<K,V>* next = nullptr;
+    std::atomic<leaf_node<K,V>*> new_next = nullptr;
+    Linked_List<K,V> data_array_list;
+    void create_new_leaf();
     int64_t insert_leaf(K,V, int tid = -1, int phase = -1);
     void stabilize();
-    void split_internal(Node<K,V>*, Node<K,V>*){}
     void split_leaf();
-    void create_new_leaf();
     void mark();
     int64_t delete_leaf(K);
     int64_t delete_leaf(K key, int, int);
-    bool merge_leaf(Node<K,V>* right_child);
-    Node<K,V>* merge_internal(Node<K,V>* ,Node<K,V>*, int64_t) {}
+    bool merge_leaf(leaf_node<K,V>* right_child);
     leaf_node<K,V> (int min, int max)
     {
         this -> node_count = 0;
         this->min = min;
         this-> max = max;
-        help_idx = -1;
         is_leaf = true;
         new_next = nullptr;
         status = 0;
@@ -52,9 +54,6 @@ void leaf_node<K,V>:: stabilize()
     std::vector<std::pair<K,Vnode<V>*>>* curr_res = nullptr;
     res.compare_exchange_strong(curr_res, res1, std::memory_order_seq_cst, std::memory_order_seq_cst);
 	count.store((int64_t)(*res.load(std::memory_order_seq_cst)).size(), std::memory_order_seq_cst);
-//	if(count.load(std::memory_order_seq_cst) == 0){
-//		std::cout << "bad\n";
-//	}
 	if(status == 1){
         int64_t temp = 1;
         status.compare_exchange_strong(temp,temp + 1, std::memory_order_seq_cst, std::memory_order_seq_cst);
@@ -96,8 +95,6 @@ int64_t leaf_node<K,V>::insert_leaf(K key, V value, int tid, int phase)
 template<typename K, typename V>
 int64_t leaf_node<K,V>::delete_leaf(K key, int tid, int phase) {
     State<K, V> *curr_state = stateArray[tid];
-//    curr_state->finished = true;
-//    return -1;
     ll_Node<K, V> *curr_node = curr_state->search_node.load(std::memory_order_seq_cst);
     if (curr_node == nullptr) {
         curr_state->finished = true;
@@ -119,7 +116,6 @@ int64_t leaf_node<K,V>::delete_leaf(K key, int tid, int phase) {
     if(node == nullptr) {
         curr_state -> finished = true;
         return -1;
-//        return -1;
     }
     if(node -> key == key){
         if(data_array_list.read(node) == -1)
@@ -136,7 +132,6 @@ int64_t leaf_node<K,V>::delete_leaf(K key, int tid, int phase) {
 
 template<typename K, typename V>
 int64_t leaf_node<K,V>::delete_leaf(K key) {
-//    return 0;
     ll_Node<K,V>* node = data_array_list.find(key);
     if(node == nullptr)
         return -1;
@@ -185,7 +180,7 @@ void leaf_node<K,V> :: split_leaf()
             curr_list_node = new_node;
             j++;
         }
-        Node *temp = nullptr;
+        leaf_node<K,V> *temp = nullptr;
         if(new_next.compare_exchange_strong(temp, left_child, std::memory_order_seq_cst, std::memory_order_seq_cst)) {
             return;
         }
@@ -193,7 +188,7 @@ void leaf_node<K,V> :: split_leaf()
 }
 
 template<typename K, typename V>
-bool leaf_node<K,V>::merge_leaf(Node<K,V>* right_child) {
+bool leaf_node<K,V>::merge_leaf(leaf_node<K,V>* right_child) {
     std::vector<std::pair<K, Vnode<V>*>>* res_lc = res.load(std::memory_order_seq_cst);
     std::vector<std::pair<K, Vnode<V>*>>* res_rc = right_child -> res.load(std::memory_order_seq_cst);
     if(new_next.load(std::memory_order_seq_cst)) {
@@ -220,7 +215,7 @@ bool leaf_node<K,V>::merge_leaf(Node<K,V>* right_child) {
             curr_list_node = new_node;
         }
         merged_leaf -> next = right_child -> next;
-        Node<K,V>* temp = nullptr;
+        leaf_node<K,V>* temp = nullptr;
         new_next.compare_exchange_strong(temp, merged_leaf, std::memory_order_seq_cst, std::memory_order_seq_cst);
         return true;    // Merge Happens
     }
@@ -282,7 +277,7 @@ bool leaf_node<K,V>::merge_leaf(Node<K,V>* right_child) {
         }
         left_merged -> next = right_merged;
         right_merged -> next = right_child -> next;
-        Node<K,V>* temp = nullptr;
+        leaf_node<K,V>* temp = nullptr;
         new_next.compare_exchange_strong(temp,left_merged, std::memory_order_seq_cst, std::memory_order_seq_cst);
         return false;  // Merge is not Happening, borrow is
     }
@@ -294,7 +289,7 @@ void leaf_node<K,V>::create_new_leaf() {
         return;
     }
     std::vector<std::pair<K,Vnode<V>*>>* res1 = res.load(std::memory_order_seq_cst);
-    Node<K,V>* new_leaf = new leaf_node<K,V>(min, max);
+    leaf_node<K,V>* new_leaf = new leaf_node<K,V>(min, max);
     ll_Node<K,V> *curr_list_node = new_leaf -> data_array_list.head;
     ll_Node<K,V> *last_list_node = new_leaf -> data_array_list.head -> next.load(std::memory_order_seq_cst);
     for(int64_t i = 0; i < count.load(std::memory_order_seq_cst); i++)
@@ -305,7 +300,7 @@ void leaf_node<K,V>::create_new_leaf() {
     }
     new_leaf -> next = next;
     new_leaf -> node_count.store(count.load(std::memory_order_seq_cst), std::memory_order_seq_cst);
-    Node<K,V>* temp = nullptr;
+    leaf_node<K,V>* temp = nullptr;
     new_next.compare_exchange_strong(temp, new_leaf, std::memory_order_seq_cst, std::memory_order_seq_cst);
     return;
 }
