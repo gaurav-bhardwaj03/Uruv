@@ -110,7 +110,6 @@ internal_node<K,V>* internal_node<K,V>::merge_internal(internal_node<K,V>* curr_
     }
     else // borrow
     {
-        std::chrono::high_resolution_clock::time_point op_time;
         internal_node<K,V>* left_child = new internal_node<K,V> (min, max);
         internal_node<K,V>* new_right_child = new internal_node<K,V> (min, max);
         internal_node<K,V>* new_node = new internal_node<K,V> (curr_node -> min, curr_node -> max);
@@ -151,7 +150,6 @@ internal_node<K,V>* internal_node<K,V>::merge_internal(internal_node<K,V>* curr_
             return new_node;
         }
         else{ //right borrow
-            std::chrono::high_resolution_clock::time_point op_time;
             left_child -> count.store(count.load(std::memory_order_seq_cst) + 1, std::memory_order_seq_cst);
             new_right_child -> count.store(right_child -> count.load(std::memory_order_seq_cst) - 1);
             int64_t i = 0;
