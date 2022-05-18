@@ -154,7 +154,7 @@ std::pair<Node<K,V>*, Node<K,V>*> BPTree<K,V>::balance_leaf(Node<K, V>* curr_nod
 
 template<typename K, typename V>
 bool BPTree<K,V>::set_help_idx(Node<K, V> *curr_node, int curr_idx) {
-    if(((internal_node<K,V>*)curr_node) -> help_idx.load(std::memory_order_seq_cst) == -1)
+    if(((internal_node<K,V>*)curr_node) -> help_idx.load(std::memory_order_seq_cst) == -1) // Help_idx is not set
     {
         int64_t temp = -1;
         if(!((internal_node<K,V>*)curr_node) -> help_idx.compare_exchange_strong(temp, curr_idx, std::memory_order_seq_cst, std::memory_order_seq_cst)) {
@@ -200,7 +200,7 @@ V BPTree<K,V>:: search(K key){
 }
 
 template<typename K, typename V>
-void BPTree<K,V>::init_thread(int tid)
+void BPTree<K,V>::init_thread(int tid) // Initialize the helprecord for each thread
 {
     help_obj = new HelpRecord(tid);
 }

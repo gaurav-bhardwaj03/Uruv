@@ -10,7 +10,7 @@ public:
     std::atomic<int64_t> node_count;
     std::atomic<std::vector<std::pair<K,Vnode<V>*>>*> res;
     leaf_node<K,V>* next = nullptr;
-    std::atomic<leaf_node<K,V>*> new_next = nullptr;
+    std::atomic<leaf_node<K,V>*> new_next = nullptr;  // Used in linking the leaf nodes while performing range search
     Linked_List<K,V> data_array_list;
     void create_new_leaf();
     int64_t insert_leaf(K,V, int tid = -1, int phase = -1);

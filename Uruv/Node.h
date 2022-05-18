@@ -11,8 +11,6 @@
 #include "util.h"
 #include "LF_LL.h"
 
-
-
 template<typename K, typename V>
 class Node{
 public:
@@ -21,7 +19,7 @@ public:
     int min;
     std::atomic<int64_t> count;
     virtual void mark() = 0;
-    std::atomic<int64_t>status;
+    std::atomic<int64_t>status; // Variable to check whether node is already marked or stabilize
 };
 
 #endif //LF_B_TREEV2_NODE_H

@@ -8,7 +8,7 @@ template<typename K, typename V>
 class internal_node: public Node<int64_t, int64_t>
 {
 public:
-    std::atomic<int64_t> help_idx;
+    std::atomic<int64_t> help_idx;  // Index maintained for helping
     std::vector<K> key;
     std::atomic<Node<K,V>*> ptr[MAX + 1];
     void mark();
