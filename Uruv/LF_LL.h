@@ -1,4 +1,6 @@
-
+//
+// Created by gaurav on 31/03/22.
+//
 
 #ifndef UNTITLED_LF_LL_H
 #define UNTITLED_LF_LL_H
@@ -46,8 +48,8 @@ public:
         Vnode<V>* head = (Vnode<V>*) unset_mark((uintptr_t) node -> vhead.load(std::memory_order_seq_cst));
         init_ts(head);
         if(head -> value != old_value) return false;
-		if(head -> value == new_value)
-			return true;
+        if(head -> value == new_value)
+            return true;
         Vnode<V>* new_node = new Vnode<V>(new_value, head);
         if(expt_sleep){
             int dice_roll = dice(gen);
@@ -192,8 +194,8 @@ int Linked_List<K,V>::insert(K key, V value) {
             while(true)
             {
                 V curr_value = read(right_node);
-				if(curr_value == value)
-					return 0;
+                if(curr_value == value)
+                    return 0;
                 if(vCAS(right_node,curr_value,value))
                     break;
                 else if(is_marked_ref((uintptr_t) right_node -> vhead.load(std::memory_order_seq_cst)))

@@ -1,12 +1,16 @@
+//
+// Created by gaurav on 31/03/22.
+//
 
 #ifndef UNTITLED_UTIL_H
 #define UNTITLED_UTIL_H
+
 
 #include<atomic>
 #include <random>
 #include<vector>
 #include<stdint.h>
-#include "VersionTracker/TrackerList.h"
+#include "TrackerList/TrackerList.h"
 
 const int64_t MAX = 32;
 const int64_t MIN = 8;
@@ -14,7 +18,7 @@ const int64_t MIN = 8;
 std::atomic<int64_t> phase_counter = 0;
 int NUM_THREADS;
 int HELPING_DELAY = 1;
-int MAX_FAILURE = 1;
+int MAX_FAILURE = 1000000000;
 std::vector<int64_t> worst_case_resp_time;
 thread_local int FAILURE = 0;
 thread_local int cnt = 0;
@@ -80,7 +84,7 @@ public:
     }
 };
 
-ll_Node<int64_t, int64_t>* dummy_node = new ll_Node<int64_t, int64_t>(-1, -1);
+ll_Node<uint64_t, int64_t>* dummy_node = new ll_Node<uint64_t, int64_t>(-1, -1);
 
 template<typename K, typename V>
 class State{
@@ -102,7 +106,7 @@ public:
     }
 };
 
-std::vector<State<int64_t ,int64_t>*> stateArray;
+std::vector<State<uint64_t, int64_t>*> stateArray;
 
 class HelpRecord
 {
